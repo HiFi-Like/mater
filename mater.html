@@ -341,29 +341,38 @@
         }
 
         function fetchFromGAS() {
-            if (!GAS_URL || GAS_URL.includes("YOUR_GAS_WEB_APP_URL_HERE")) {
-                document.getElementById('sync-text').innerText = "同期状態: URL未設定";
-                return;
-            }
-            document.getElementById('sync-text').innerText = "同期状態: 取得中...";
-            fetch(`${GAS_URL}?action=get`, { mode: 'cors' })
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.rpgState) {
-                        appData = data;
-                        applyTimeDecay();
-                        updateStatusDOM();
-                        renderMeters();
-                        document.getElementById('sync-text').innerText = "同期状態: 完了";
-                    } else {
-                        saveToGAS();
-                        document.getElementById('sync-text').innerText = "同期状態: 初期データ作成";
-                    }
-                })
-                .catch(err => {
-                    document.getElementById('sync-text').innerText = "同期状態: 接続失敗";
-                });
+    if (!GAS_URL || GAS_URL.includes("YOUR_GAS_WEB_APP_URL_HERE")) {
+        document.getElementById('sync-text').innerText = "同期状態: URL未設定";
+        return;
+    }
+    document.getElementById('sync-text').innerText = "同期状態: 取得中...";
+    
+    // redirect: 'follow' を追加
+    fetch(`${GAS_URL}?action=get`, { 
+        method: 'GET',
+        redirect: 'follow'
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Network response was not ok');
+        return res.json();
+    })
+    .then(data => {
+        if (data && data.rpgState) {
+            appData = data;
+            applyTimeDecay();
+            updateStatusDOM();
+            renderMeters();
+            document.getElementById('sync-text').innerText = "同期状態: 完了";
+        } else {
+            saveToGAS();
+            document.getElementById('sync-text').innerText = "同期状態: 初期データ作成";
         }
+    })
+    .catch(err => {
+        console.error("Fetch Error:", err);
+        document.getElementById('sync-text').innerText = "同期状態: 接続失敗";
+    });
+}
 
         function applyTimeDecay() {
             const now = new Date().getTime();
