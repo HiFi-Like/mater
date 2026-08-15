@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>学習パラメーターマネージャー RPG</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            background-color: #121214;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #home-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .status-frame {
+            background-color: #1a1a1e;
+            border: 2px solid #3a3a40;
+            border-radius: 12px;
+            padding: 12px;
+            width: 100%;
+            max-width: 360px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .level-row { display: flex; align-items: center; gap: 12px; }
+
+        .level-circle {
+            width: 45px; height: 45px; border-radius: 50%;
+            background-color: #2980b9; border: 2px solid #3498db;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 14px;
+        }
+        .level-circle span { font-size: 10px; color: #bdc3c7; }
+
+        .exp-bar-container {
+            flex: 1; height: 16px; background-color: #2a2a30;
+            border-radius: 8px; overflow: hidden; border: 1px solid #444; position: relative;
+        }
+
+        .exp-bar-fill {
+            height: 100%; background: linear-gradient(90deg, #f1c40f, #f39c12);
+            width: 0%; transition: width 0.4s ease;
+        }
+
+        .exp-text {
+            position: absolute; width: 100%; text-align: center;
+            font-size: 10px; font-weight: bold; line-height: 14px; color: #fff; text-shadow: 1px 1px 2px #000;
+        }
+
+        .time-stats {
+            font-size: 11px; color: #b0b0b5; display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+            border-top: 1px solid #2a2a30; padding-top: 6px;
+        }
+        .total-time { grid-column: 1 / span 2; font-weight: bold; color: #fff; font-size: 12px; }
+
+        .sync-status {
+            font-size: 10px; color: #f1c40f; text-align: right; margin-top: 2px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .sync-btn {
+            background: #333; color: #ccc; border: 1px solid #555; border-radius: 4px; padding: 2px 6px; font-size: 9px; cursor: pointer;
+        }
+
+        .mission-trigger-btn {
+            background-color: #000000; border: 2px solid #2ecc71; color: #2ecc71;
+            border-radius: 8px; padding: 10px; font-size: 13px; font-weight: bold; text-align: center;
+            cursor: pointer; box-shadow: 0 4px 10px rgba(46, 204, 113, 0.2);
+            display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 360px; margin-top: 10px;
+        }
+        .mission-trigger-btn:active { background-color: #0a2010; }
+
+        .main-action-area { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 180px; }
+
+        .study-trigger-btn {
+            width: 130px; height: 130px; border-radius: 50%;
+            background: radial-gradient(#e74c3c, #c0392b); border: 4px solid #f1c40f;
+            color: white; font-size: 18px; font-weight: bold; box-shadow: 0 0 15px rgba(231, 76, 60, 0.4);
+            cursor: pointer; display: flex; align-items: center; justify-content: center; text-shadow: 1px 1px 3px #000;
+        }
+        .study-trigger-btn:active { transform: scale(0.95); }
+
+        .map-trigger-btn {
+            position: absolute; bottom: 20px; right: 20px; background-color: #8e44ad; border: 2px solid #9b59b6;
+            color: #ffffff; border-radius: 8px; padding: 10px 14px; font-size: 12px; font-weight: bold;
+            cursor: pointer; box-shadow: 0 4px 10px rgba(142, 68, 173, 0.4); display: flex; align-items: center; gap: 6px;
+        }
+
+        .subject-container { flex: 1; overflow-y: auto; padding: 15px 10px; display: none; }
+        .meter-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 600px; margin: 0 auto; }
+        .meter-card {
+            background-color: #1a1a1e; border: 1px solid #2a2a30; border-radius: 8px; padding: 8px;
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between; min-height: 200px;
+        }
+        .meter-title { font-size: 11px; font-weight: bold; text-align: center; color: #b0b0b5; height: 30px; display: flex; align-items: center; }
+        .meter-container { width: 20px; height: 90px; background-color: #2a2a30; border-radius: 4px; position: relative; overflow: hidden; border: 1px solid #3a3a40; }
+        .meter-fill { width: 100%; position: absolute; bottom: 0; transition: height 0.3s, background-color 0.3s; }
+        .meter-value { font-size: 11px; font-weight: bold; margin: 4px 0; font-family: monospace; }
+        .recovery-btn { width: 100%; background-color: #27ae60; color: white; border: none; padding: 5px 0; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);
+            display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 100;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-box {
+            background-color: #1a1a1e; border: 2px solid #3a3a40; border-radius: 12px; padding: 20px;
+            width: 90%; max-width: 420px; max-height: 85vh; display: flex; flex-direction: column; gap: 15px; overflow-y: auto;
+        }
+        .modal-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #2a2a30; padding-bottom: 8px; }
+        .modal-header h3 { font-size: 16px; color: #f1c40f; }
+        .extra-toggle-btn { background-color: #e74c3c; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .modal-box select, .modal-box input { background-color: #2a2a30; border: 1px solid #444; color: white; padding: 8px; border-radius: 6px; font-size: 14px; width: 100%; outline: none; }
+        .modal-btns { display: flex; gap: 10px; }
+        .modal-btns button { flex: 1; padding: 8px; border-radius: 6px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; }
+        .btn-cancel { background-color: #7f8c8d; color: white; }
+        .btn-confirm { background-color: #e74c3c; color: white; }
+
+        .mission-banner {
+            background: linear-gradient(135deg, #2c3e50, #2980b9); border: 2px solid #f1c40f; border-radius: 8px;
+            padding: 15px; color: white; font-weight: bold; font-size: 16px; text-align: center; cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: space-between;
+        }
+        .mission-list { display: flex; flex-direction: column; gap: 8px; }
+        .mission-item { background-color: #2a2a30; border: 1px solid #3a3a40; border-radius: 6px; padding: 10px; display: flex; align-items: center; justify-content: space-between; }
+        .mission-item.cleared { background-color: #151518; border-color: #222; opacity: 0.4; }
+        .mission-title-text { font-size: 12px; font-weight: bold; color: #ffffff; flex: 1; padding-right: 10px; }
+        .mission-item.cleared .mission-title-text { color: #7f8c8d; text-decoration: line-through; }
+        .mission-btn { background-color: #27ae60; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; min-width: 70px; }
+        .cleared-badge { color: #f1c40f; font-weight: bold; font-size: 11px; letter-spacing: 1px; min-width: 70px; text-align: center; }
+
+        .roadmap-container { position: relative; padding-left: 25px; display: flex; flex-direction: column; gap: 16px; }
+        .roadmap-container::before { content: ''; position: absolute; left: 7px; top: 15px; bottom: 15px; width: 3px; background-color: #3a3a40; z-index: 1; }
+        .roadmap-node { position: relative; background-color: #2a2a30; border: 1px solid #3a3a40; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; z-index: 2; }
+        .roadmap-node::before { content: ''; position: absolute; left: -23px; width: 13px; height: 13px; border-radius: 50%; background-color: #1a1a1e; border: 3px solid #555; z-index: 3; }
+        .roadmap-node.active { border-color: #f1c40f; }
+        .roadmap-node.active::before { border-color: #f1c40f; background-color: #f1c40f; }
+        .roadmap-node.cleared { background-color: #151518; border-color: #222; opacity: 0.5; }
+        .roadmap-node.cleared::before { border-color: #ffffff; background-color: #ffffff; }
+        .roadmap-info { flex: 1; padding-right: 8px; }
+        .roadmap-title { font-size: 12px; font-weight: bold; color: #fff; }
+        .roadmap-node.cleared .roadmap-title { color: #7f8c8d; text-decoration: line-through; }
+        .roadmap-desc { font-size: 10px; color: #aaa; margin-top: 2px; }
+
+        nav { background-color: #1a1a1e; border-top: 1px solid #2a2a30; display: flex; height: 55px; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #7f8c8d; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .nav-item.active { color: #e74c3c; background-color: #222227; }
+        .nav-item.active[onclick*="math"], .nav-item.active[onclick*="physics"], .nav-item.active[onclick*="english"] { color: #2ecc71; }
+        .nav-icon { font-size: 16px; margin-bottom: 1px; }
+    </style>
+</head>
+<body>
+
+    <div id="home-container" class="main-container">
+        <div class="status-frame">
+            <div class="level-row">
+                <div class="level-circle">
+                    <span id="display-lv">1</span>
+                    <span>Lv</span>
+                </div>
+                <div class="exp-bar-container">
+                    <div class="exp-bar-fill" id="display-exp-bar"></div>
+                    <div class="exp-text" id="display-exp-text">0 / 100 EXP</div>
+                </div>
+            </div>
+            
+            <div class="time-stats">
+                <div class="total-time">累計勉強時間: <span id="time-total">0.0</span> 時間</div>
+                <div>数学: <span id="time-math">0.0</span> h</div>
+                <div>物理: <span id="time-physics">0.0</span> h</div>
+                <div>英語: <span id="time-english">0.0</span> h</div>
+            </div>
+            <div class="sync-status">
+                <span id="sync-text">同期状態: 接続中...</span>
+                <button class="sync-btn" onclick="fetchFromGAS()">再同期</button>
+            </div>
+        </div>
+
+        <div class="mission-trigger-btn" onclick="openMissionListModal()">
+            <span>ミッション一覧</span>
+        </div>
+
+        <div class="main-action-area">
+            <button class="study-trigger-btn" onclick="openStudyModal()">勉強開始</button>
+        </div>
+
+        <div class="map-trigger-btn" onclick="openRoadmapModal()">
+            <span>ロードマップ</span>
+        </div>
+    </div>
+
+    <div id="math-container" class="subject-container"><div class="meter-grid" id="math-grid"></div></div>
+    <div id="physics-container" class="subject-container"><div class="meter-grid" id="physics-grid"></div></div>
+    <div id="english-container" class="subject-container"><div class="meter-grid" id="english-grid"></div></div>
+
+    <div class="modal-overlay" id="study-modal">
+        <div class="modal-box">
+            <h3>コマンド：勉強記録</h3>
+            <select id="modal-subject">
+                <option value="math">数学</option>
+                <option value="physics">物理</option>
+                <option value="english">英語</option>
+            </select>
+            <input type="number" id="modal-duration" type="tel" step="0.1" placeholder="勉強時間（時間）を入力" min="0.1">
+            <div class="modal-btns">
+                <button class="btn-cancel" onclick="closeStudyModal()">戻る</button>
+                <button class="btn-confirm" onclick="submitStudy()">実行</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="mission-list-modal">
+        <div class="modal-box">
+            <h3>ミッション一覧</h3>
+            <div class="mission-banner" onclick="openSummerMissionModal()">
+                <span>夏季休業</span>
+                <span>></span>
+            </div>
+            <div class="modal-btns" style="margin-top: 10px;">
+                <button class="btn-cancel" onclick="closeMissionListModal()">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="summer-mission-modal">
+        <div class="modal-box">
+            <h3>夏季休業 ミッション</h3>
+            <div class="mission-list" id="summer-mission-items-container"></div>
+            <div class="modal-btns" style="margin-top: 10px;">
+                <button class="btn-cancel" onclick="closeSummerMissionModal()">戻る</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="roadmap-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="roadmap-modal-title">メインロードマップ</h3>
+                <button class="extra-toggle-btn" id="extra-toggle-btn" onclick="toggleRoadmapMode()">Extraへ</button>
+            </div>
+            <div class="roadmap-container" id="roadmap-nodes-container"></div>
+            <div class="modal-btns" style="margin-top: 10px;">
+                <button class="btn-cancel" onclick="closeRoadmapModal()">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <div class="nav-item active" id="nav-home" onclick="switchTab('home')"><span class="nav-icon">〒</span><span>ホーム</span></div>
+        <div class="nav-item" id="nav-math" onclick="switchTab('math')"><span class="nav-icon">∑</span><span>数学</span></div>
+        <div class="nav-item" id="nav-physics" onclick="switchTab('physics')"><span class="nav-icon">ω</span><span>物理</span></div>
+        <div class="nav-item" id="nav-english" onclick="switchTab('english')"><span class="nav-icon">A</span><span>英語</span></div>
+    </nav>
+
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxLRmXu5FEK2xVh3fK-w17pONY2jjp7OipQ0Yr5Jx6UFQE1QfcAJx_ZIAjiTjW2iQ-_Fw/exec";
+
+        const dataConfig = {
+            math: [{id:"m1",name:"小問集合"}, {id:"m2",name:"図形と方程式"}, {id:"m3",name:"三角関数"}, {id:"m4",name:"微分・積分"}, {id:"m5",name:"確率・数列"}, {id:"m6",name:"データと統計"}],
+            physics: [{id:"p1_1",name:"力学Ⅰ"}, {id:"p1_2",name:"力学Ⅱ"}, {id:"p2",name:"熱"}, {id:"p3",name:"波"}, {id:"p4",name:"電気"}, {id:"p5",name:"原子"}],
+            english: [{id:"e1",name:"単語"}, {id:"e2",name:"文法"}, {id:"e3",name:"長文"}, {id:"e4",name:"リスニング"}]
+        };
+
+        const summerMissionDefault = [
+            "セミナー2周全", "セミナー3周（間違いのみ）", "セミナー発展", "化学1周全", "化学間違いのみ2周", 
+            "数Ⅲ デドアラ1", "数Ⅲ デドアラ2", "数Ⅲ 15", "数Ⅲ（C）B*", "数C B*", "数Ⅰ", "数Ⅱ", 
+            "数A", "数B", "英コミュ 11,12", "英コミュ Lesson2", "論表ワーク", "論表パワステ", 
+            "共テ数学", "セミナー熱", "セミナー力学Ⅰ", "セミナー力学Ⅱ", "数Ⅲ 9", "数Ⅲ 10", 
+            "数Ⅲ 11", "数Ⅲ 12", "数Ⅲ 13", "数Ⅲ 14", "数Ⅲ B*", "セミナー1周", "数C基礎固め", "数C課題"
+        ];
+
+        const mainRoadmapData = [
+            { id: "r1", tag: "Area1 チュートリアル", desc: "成績維持に必要な最低限をこなそう" },
+            { id: "r2", tag: "Area2 意識作り", desc: "少なくとも毎日、勉強する習慣を身につけよう" },
+            { id: "r3", tag: "Area3 受験生のスタートライン", desc: "1日6～8時間以上の勉強時間を確保しよう" },
+            { id: "r4", tag: "Area4 経験値大量", desc: "過去問を解き進め、実戦経験を積もう" },
+            { id: "r5", tag: "Area5 弱点攻略", desc: "自分の苦手分野・不足している力を一つずつ潰し、得点力を引き上げよう" },
+            { id: "r6", tag: "Area6 合格圏突入", desc: "過去問で安定して合格点を取れる状態を目指そう" },
+            { id: "r7", tag: "Area7 最終調整", desc: "本番に向けて知識・解法・時間配分を仕上げよう" },
+            { id: "r8", tag: "Boss 最終決戦", desc: "受験本番、力を出し切れ！" }
+        ];
+
+        const extraRoadmapData = [
+            { id: "ex1", tag: "Extra1 その先へ___", desc: "自分で考え、自分で決め、自分で取り組む本当の自学自習を始めよう" },
+            { id: "ex2", tag: "Extra2 やり込み要素", desc: "苦手克服だけでなく、得意科目・得意分野をさらに伸ばそう" },
+            { id: "ex3", tag: "Extra3 限界突破", desc: "合格に必要なラインを超え、さらに上の得点・判定を目指しよう" }
+        ];
+
+        // 初期データテンプレート
+        function getInitialState() {
+            let meter = {};
+            Object.keys(dataConfig).forEach(sub => {
+                dataConfig[sub].forEach(item => { meter[item.id] = 100; });
+            });
+            let mission = {};
+            summerMissionDefault.forEach((title, idx) => {
+                mission[idx] = { title: title, cleared: false };
+            });
+            return {
+                rpgState: { lv: 1, exp: 0, t_total: 0, t_math: 0, t_physics: 0, t_english: 0 },
+                meterState: meter,
+                summerMissionState: mission,
+                roadmapProgress: { main: 0, extra: 0 },
+                lastUpdateTime: new Date().getTime()
+            };
+        }
+
+        let appData = getInitialState();
+
+        // GASへの送信（非同期）
+        function saveToGAS() {
+            document.getElementById('sync-text').innerText = "同期状態: 保存中...";
+            fetch(GAS_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(appData)
+            }).then(() => {
+                document.getElementById('sync-text').innerText = "同期状態: 保存完了";
+            }).catch(() => {
+                document.getElementById('sync-text').innerText = "同期状態: エラー";
+            });
+        }
+
+        // GASからの取得
+        function fetchFromGAS() {
+            if (!GAS_URL || GAS_URL.includes("YOUR_GAS_WEB_APP_URL_HERE")) {
+                document.getElementById('sync-text').innerText = "同期状態: URL未設定";
+                return;
+            }
+            document.getElementById('sync-text').innerText = "同期状態: 取得中...";
+            fetch(`${GAS_URL}?action=get`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.rpgState) {
+                        appData = data;
+                        applyTimeDecay();
+                        updateStatusDOM();
+                        renderMeters();
+                        document.getElementById('sync-text').innerText = "同期状態: 最新";
+                    } else {
+                        // データが空なら初期化して送信
+                        appData = getInitialState();
+                        saveToGAS();
+                        updateStatusDOM();
+                        renderMeters();
+                        document.getElementById('sync-text').innerText = "同期状態: 初期化完了";
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('sync-text').innerText = "同期状態: 取得失敗";
+                });
+        }
+
+        // 時間経過でのメーター減算
+        function applyTimeDecay() {
+            const now = new Date().getTime();
+            const elapsedDays = (now - appData.lastUpdateTime) / (1000 * 60 * 60 * 24);
+            const decrease = elapsedDays * 1.5;
+            if (decrease > 0) {
+                Object.keys(appData.meterState).forEach(key => {
+                    appData.meterState[key] = Math.max(0, appData.meterState[key] - decrease);
+                });
+                appData.lastUpdateTime = now;
+            }
+        }
+
+        function getRequiredExp(lv) { return 100 + (lv - 1) * 22; }
+
+        function updateStatusDOM() {
+            const rpg = appData.rpgState;
+            document.getElementById('display-lv').innerText = rpg.lv;
+            const reqExp = getRequiredExp(rpg.lv);
+            const pct = Math.min(100, (rpg.exp / reqExp) * 100);
+            document.getElementById('display-exp-bar').style.width = `${pct}%`;
+            document.getElementById('display-exp-text').innerText = `${Math.floor(rpg.exp)} / ${reqExp} EXP`;
+            document.getElementById('time-total').innerText = rpg.t_total.toFixed(2);
+            document.getElementById('time-math').innerText = rpg.t_math.toFixed(2);
+            document.getElementById('time-physics').innerText = rpg.t_physics.toFixed(2);
+            document.getElementById('time-english').innerText = rpg.t_english.toFixed(2);
+        }
+
+        function getColor(val) {
+            if (val > 70) return "#2ecc71"; if (val > 40) return "#f1c40f"; if (val > 20) return "#e67e22"; return "#e74c3c";
+        }
+
+        function renderMeters() {
+            Object.keys(dataConfig).forEach(sub => {
+                const grid = document.getElementById(`${sub}-grid`);
+                grid.innerHTML = '';
+                dataConfig[sub].forEach(item => {
+                    const val = appData.meterState[item.id] || 0;
+                    const card = document.createElement('div');
+                    card.className = 'meter-card';
+                    card.innerHTML = `
+                        <div class="meter-title">${item.name}</div>
+                        <div class="meter-container"><div class="meter-fill" style="height:${val}%; background-color:${getColor(val)};"></div></div>
+                        <div class="meter-value">${val.toFixed(1)}</div>
+                        <button class="recovery-btn" onclick="recover('${item.id}')">回復</button>
+                    `;
+                    grid.appendChild(card);
+                });
+            });
+        }
+
+        window.recover = function(id) {
+            appData.meterState[id] = 100;
+            saveToGAS(); renderMeters();
+        };
+
+        window.openStudyModal = function() { document.getElementById('study-modal').classList.add('active'); };
+        window.closeStudyModal = function() { document.getElementById('study-modal').classList.remove('active'); document.getElementById('modal-duration').value=''; };
+        window.openMissionListModal = function() { document.getElementById('mission-list-modal').classList.add('active'); };
+        window.closeMissionListModal = function() { document.getElementById('mission-list-modal').classList.remove('active'); };
+        window.openSummerMissionModal = function() { closeMissionListModal(); renderSummerMissions(); document.getElementById('summer-mission-modal').classList.add('active'); };
+        window.closeSummerMissionModal = function() { document.getElementById('summer-mission-modal').classList.remove('active'); openMissionListModal(); };
+
+        function renderSummerMissions() {
+            const container = document.getElementById('summer-mission-items-container');
+            container.innerHTML = '';
+            const uncleared = [], cleared = [];
+            Object.keys(appData.summerMissionState).forEach(idx => {
+                const item = appData.summerMissionState[idx];
+                (item.cleared ? cleared : uncleared).push({ idx: idx, ...item });
+            });
+            [...uncleared, ...cleared].forEach(item => {
+                const div = document.createElement('div');
+                div.className = `mission-item ${item.cleared ? 'cleared' : ''}`;
+                div.innerHTML = `
+                    <div class="mission-title-text">${item.title}</div>
+                    ${item.cleared ? `<div class="cleared-badge">CLEARED</div>` : `<button class="mission-btn" onclick="completeSummerMission('${item.idx}')">完了</button>`}
+                `;
+                container.appendChild(div);
+            });
+        }
+        window.completeSummerMission = function(idx) { appData.summerMissionState[idx].cleared = true; saveToGAS(); renderSummerMissions(); };
+
+        let currentRoadmapMode = 'main';
+        window.openRoadmapModal = function() { renderRoadmap(); document.getElementById('roadmap-modal').classList.add('active'); };
+        window.closeRoadmapModal = function() { document.getElementById('roadmap-modal').classList.remove('active'); };
+        window.toggleRoadmapMode = function() { currentRoadmapMode = (currentRoadmapMode === 'main') ? 'extra' : 'main'; renderRoadmap(); };
+
+        function renderRoadmap() {
+            const container = document.getElementById('roadmap-nodes-container');
+            const titleEl = document.getElementById('roadmap-modal-title');
+            const toggleBtn = document.getElementById('extra-toggle-btn');
+            container.innerHTML = '';
+
+            const isMain = (currentRoadmapMode === 'main');
+            const dataList = isMain ? mainRoadmapData : extraRoadmapData;
+            const progressIndex = isMain ? appData.roadmapProgress.main : appData.roadmapProgress.extra;
+
+            titleEl.innerText = isMain ? 'メインロードマップ' : 'Extraロードマップ';
+            toggleBtn.innerText = isMain ? 'Extraへ' : 'Mainへ';
+
+            dataList.forEach((item, index) => {
+                const node = document.createElement('div');
+                const isCleared = index < progressIndex;
+                const isCurrent = index === progressIndex;
+                const isLocked = index > progressIndex;
+
+                let nodeClass = "roadmap-node";
+                if (isCleared) nodeClass += " cleared";
+                if (isCurrent) nodeClass += " active";
+
+                let titleText = isLocked ? "【？？？】？？？" : `【${item.tag}】`;
+                let descText = isLocked ? "前のステージをクリアすると解放されます" : item.desc;
+
+                let actionHTML = '';
+                if (isCleared) {
+                    actionHTML = `<div class="cleared-badge">CLEARED</div>`;
+                } else if (isCurrent) {
+                    actionHTML = `<button class="mission-btn" onclick="advanceRoadmap(${index})">完了</button>`;
+                } else {
+                    actionHTML = `<button class="mission-btn" style="background-color:#555; cursor:not-allowed;" disabled>未解放</button>`;
+                }
+
+                node.className = nodeClass;
+                node.innerHTML = `
+                    <div class="roadmap-info">
+                        <div class="roadmap-title">${titleText}</div>
+                        <div class="roadmap-desc">${descText}</div>
+                    </div>
+                    ${actionHTML}
+                `;
+                container.appendChild(node);
+            });
+        }
+
+        window.advanceRoadmap = function(index) {
+            if (currentRoadmapMode === 'main') {
+                appData.roadmapProgress.main = index + 1;
+            } else {
+                appData.roadmapProgress.extra = index + 1;
+            }
+            saveToGAS(); renderRoadmap();
+        };
+
+        window.submitStudy = function() {
+            const sub = document.getElementById('modal-subject').value;
+            const hours = parseFloat(document.getElementById('modal-duration').value);
+            if (isNaN(hours) || hours <= 0) return alert('正しい時間を入力してください');
+
+            const minutes = hours * 60;
+            appData.rpgState.exp += minutes;
+            appData.rpgState.t_total += hours;
+            if (sub === 'math') appData.rpgState.t_math += hours;
+            if (sub === 'physics') appData.rpgState.t_physics += hours;
+            if (sub === 'english') appData.rpgState.t_english += hours;
+
+            while (appData.rpgState.exp >= getRequiredExp(appData.rpgState.lv)) {
+                appData.rpgState.exp -= getRequiredExp(appData.rpgState.lv);
+                appData.rpgState.lv += 1;
+                alert(`LEVEL UP! レベル ${appData.rpgState.lv} になった！`);
+            }
+
+            saveToGAS(); updateStatusDOM(); renderMeters(); closeStudyModal();
+        };
+
+        window.switchTab = function(target) {
+            document.querySelectorAll('#home-container, .subject-container').forEach(el => el.style.display = 'none');
+            document.getElementById(`${target}-container`).style.display = (target === 'home') ? 'flex' : 'block';
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(`nav-${target}`).classList.add('active');
+        };
+
+        // アプリ起動時にGASからデータ取得
+        fetchFromGAS();
+        switchTab('home');
+    </script>
+</body>
+</html>
