@@ -191,7 +191,7 @@
                 <div>英語: <span id="time-english">0.0</span> h</div>
             </div>
             <div class="sync-status">
-                <span id="sync-text">同期状態: 接続中...</span>
+                <span id="sync-text">同期状態: 待機中</span>
                 <button class="sync-btn" onclick="fetchFromGAS()">再同期</button>
             </div>
         </div>
@@ -273,7 +273,7 @@
     </nav>
 
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbxLRmXu5FEK2xVh3fK-w17pONY2jjp7OipQ0Yr5Jx6UFQE1QfcAJx_ZIAjiTjW2iQ-_Fw/exec";
+         const GAS_URL = "https://script.google.com/macros/s/AKfycbxLRmXu5FEK2xVh3fK-w17pONY2jjp7OipQ0Yr5Jx6UFQE1QfcAJx_ZIAjiTjW2iQ-_Fw/exec";
 
         const dataConfig = {
             math: [{id:"m1",name:"小問集合"}, {id:"m2",name:"図形と方程式"}, {id:"m3",name:"三角関数"}, {id:"m4",name:"微分・積分"}, {id:"m5",name:"確率・数列"}, {id:"m6",name:"データと統計"}],
@@ -306,7 +306,6 @@
             { id: "ex3", tag: "Extra3 限界突破", desc: "合格に必要なラインを超え、さらに上の得点・判定を目指しよう" }
         ];
 
-        // 初期データテンプレート
         function getInitialState() {
             let meter = {};
             Object.keys(dataConfig).forEach(sub => {
@@ -327,29 +326,27 @@
 
         let appData = getInitialState();
 
-        // GASへの送信（非同期）
         function saveToGAS() {
             document.getElementById('sync-text').innerText = "同期状態: 保存中...";
             fetch(GAS_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify(appData)
             }).then(() => {
-                document.getElementById('sync-text').innerText = "同期状態: 保存完了";
+                document.getElementById('sync-text').innerText = "同期状態: 保存要求送信";
             }).catch(() => {
-                document.getElementById('sync-text').innerText = "同期状態: エラー";
+                document.getElementById('sync-text').innerText = "同期状態: 送信エラー";
             });
         }
 
-        // GASからの取得
         function fetchFromGAS() {
             if (!GAS_URL || GAS_URL.includes("YOUR_GAS_WEB_APP_URL_HERE")) {
                 document.getElementById('sync-text').innerText = "同期状態: URL未設定";
                 return;
             }
             document.getElementById('sync-text').innerText = "同期状態: 取得中...";
-            fetch(`${GAS_URL}?action=get`)
+            fetch(`${GAS_URL}?action=get`, { mode: 'cors' })
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.rpgState) {
@@ -357,22 +354,17 @@
                         applyTimeDecay();
                         updateStatusDOM();
                         renderMeters();
-                        document.getElementById('sync-text').innerText = "同期状態: 最新";
+                        document.getElementById('sync-text').innerText = "同期状態: 完了";
                     } else {
-                        // データが空なら初期化して送信
-                        appData = getInitialState();
                         saveToGAS();
-                        updateStatusDOM();
-                        renderMeters();
-                        document.getElementById('sync-text').innerText = "同期状態: 初期化完了";
+                        document.getElementById('sync-text').innerText = "同期状態: 初期データ作成";
                     }
                 })
                 .catch(err => {
-                    document.getElementById('sync-text').innerText = "同期状態: 取得失敗";
+                    document.getElementById('sync-text').innerText = "同期状態: 接続失敗";
                 });
         }
 
-        // 時間経過でのメーター減算
         function applyTimeDecay() {
             const now = new Date().getTime();
             const elapsedDays = (now - appData.lastUpdateTime) / (1000 * 60 * 60 * 24);
@@ -409,7 +401,7 @@
                 const grid = document.getElementById(`${sub}-grid`);
                 grid.innerHTML = '';
                 dataConfig[sub].forEach(item => {
-                    const val = appData.meterState[item.id] || 0;
+                    const val = appData.meterState[item.id] !== undefined ? appData.meterState[item.id] : 100;
                     const card = document.createElement('div');
                     card.className = 'meter-card';
                     card.innerHTML = `
@@ -544,9 +536,13 @@
             document.getElementById(`nav-${target}`).classList.add('active');
         };
 
-        // アプリ起動時にGASからデータ取得
-        fetchFromGAS();
+        // 1. 初期状態で即座にローカル描画（これでメーターが表示されます）
+        updateStatusDOM();
+        renderMeters();
         switchTab('home');
+
+        // 2. その後GASからデータを読み込む
+        fetchFromGAS();
     </script>
 </body>
 </html>
