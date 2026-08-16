@@ -326,32 +326,21 @@
 
         let appData = getInitialState();
 
-function saveToGAS() {
-    if (!GAS_URL || GAS_URL.includes("YOUR_GAS_WEB_APP_URL_HERE")) return;
+        function saveToGAS() {
+            document.getElementById('sync-text').innerText = "同期状態: 保存中...";
+            fetch(GAS_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(appData)
+            }).then(() => {
+                document.getElementById('sync-text').innerText = "同期状態: 保存要求送信";
+            }).catch(() => {
+                document.getElementById('sync-text').innerText = "同期状態: 送信エラー";
+            });
+        }
 
-    document.getElementById('sync-text').innerText = "同期状態: 保存中...";
-
-    const payload = JSON.stringify(appData);
-
-    fetch(GAS_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-            'Content-Type': 'text/plain'
-        },
-        body: payload
-    })
-    .then(() => {
-        // no-corsモードではレスポンスの中身が読めないため、送信成功時点で完了とみなします
-        document.getElementById('sync-text').innerText = "同期状態: 保存完了";
-    })
-    .catch(err => {
-        document.getElementById('sync-text').innerText = "同期状態: 保存失敗";
-        console.error("保存通信エラー:", err);
-    });
-}
-
-function fetchFromGAS() {
+        function fetchFromGAS() {
     if (!GAS_URL || GAS_URL.includes("YOUR_GAS_WEB_APP_URL_HERE")) {
         document.getElementById('sync-text').innerText = "同期状態: URL未設定";
         return;
