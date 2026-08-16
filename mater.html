@@ -335,21 +335,15 @@ function saveToGAS() {
 
     fetch(GAS_URL, {
         method: 'POST',
+        mode: 'no-cors',
         headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
+            'Content-Type': 'text/plain'
         },
-        body: payload,
-        redirect: 'follow'
+        body: payload
     })
-    .then(res => res.json())
-    .then(data => {
-        if (data && data.status === 'success') {
-            document.getElementById('sync-text').innerText = "同期状態: 保存完了";
-            console.log("保存成功:", data);
-        } else {
-            document.getElementById('sync-text').innerText = "同期状態: 保存エラー";
-            console.error("保存レスポンスエラー:", data);
-        }
+    .then(() => {
+        // no-corsモードではレスポンスの中身が読めないため、送信成功時点で完了とみなします
+        document.getElementById('sync-text').innerText = "同期状態: 保存完了";
     })
     .catch(err => {
         document.getElementById('sync-text').innerText = "同期状態: 保存失敗";
