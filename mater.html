@@ -326,21 +326,38 @@
 
         let appData = getInitialState();
 
-        function saveToGAS() {
-            document.getElementById('sync-text').innerText = "同期状態: 保存中...";
-            fetch(GAS_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(appData)
-            }).then(() => {
-                document.getElementById('sync-text').innerText = "同期状態: 保存要求送信";
-            }).catch(() => {
-                document.getElementById('sync-text').innerText = "同期状態: 送信エラー";
-            });
-        }
+function saveToGAS() {
+    if (!GAS_URL || GAS_URL.includes("YOUR_GAS_WEB_APP_URL_HERE")) return;
 
-        function fetchFromGAS() {
+    document.getElementById('sync-text').innerText = "同期状態: 保存中...";
+
+    const payload = JSON.stringify(appData);
+
+    fetch(GAS_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: payload,
+        redirect: 'follow'
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data && data.status === 'success') {
+            document.getElementById('sync-text').innerText = "同期状態: 保存完了";
+            console.log("保存成功:", data);
+        } else {
+            document.getElementById('sync-text').innerText = "同期状態: 保存エラー";
+            console.error("保存レスポンスエラー:", data);
+        }
+    })
+    .catch(err => {
+        document.getElementById('sync-text').innerText = "同期状態: 保存失敗";
+        console.error("保存通信エラー:", err);
+    });
+}
+
+function fetchFromGAS() {
     if (!GAS_URL || GAS_URL.includes("YOUR_GAS_WEB_APP_URL_HERE")) {
         document.getElementById('sync-text').innerText = "同期状態: URL未設定";
         return;
