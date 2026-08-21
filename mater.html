@@ -32,90 +32,104 @@
             position: relative;
         }
 
+        /* ステータスフレーム：左上重視のレイアウト */
         .status-frame {
             background-color: #1a1a1e;
             border: 2px solid #3a3a40;
             border-radius: 12px;
-            padding: 12px;
+            padding: 14px;
             width: 100%;
             max-width: 400px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
         }
 
-        .level-row { display: flex; align-items: center; gap: 12px; }
+        /* 左上：累計時間＆ミッションヘッダー */
+        .header-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2a2a30;
+            padding-bottom: 10px;
+        }
+        .total-time-title {
+            font-size: 11px;
+            color: #888;
+        }
+        .total-time-val {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2ecc71;
+        }
+        .mission-trigger-btn {
+            background-color: #000000;
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
+        /* レベル＆経験値 */
+        .level-row { display: flex; align-items: center; gap: 12px; }
         .level-circle {
-            width: 45px; height: 45px; border-radius: 50%;
+            width: 42px; height: 42px; border-radius: 50%;
             background-color: #2980b9; border: 2px solid #3498db;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 14px; flex-shrink: 0;
+            font-weight: bold; font-size: 13px; flex-shrink: 0;
         }
-        .level-circle span { font-size: 10px; color: #bdc3c7; }
+        .level-circle span { font-size: 9px; color: #bdc3c7; }
 
         .exp-bar-container {
-            flex: 1; height: 16px; background-color: #2a2a30;
-            border-radius: 8px; overflow: hidden; border: 1px solid #444; position: relative;
+            flex: 1; height: 14px; background-color: #2a2a30;
+            border-radius: 7px; overflow: hidden; border: 1px solid #444; position: relative;
         }
-
         .exp-bar-fill {
             height: 100%; background: linear-gradient(90deg, #f1c40f, #f39c12);
             width: 0%; transition: width 0.4s ease;
         }
-
         .exp-text {
             position: absolute; width: 100%; text-align: center;
-            font-size: 10px; font-weight: bold; line-height: 14px; color: #fff; text-shadow: 1px 1px 2px #000;
+            font-size: 9px; font-weight: bold; line-height: 12px; color: #fff; text-shadow: 1px 1px 2px #000;
         }
 
-        .time-stats {
-            font-size: 11px; color: #b0b0b5; display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
-            border-top: 1px solid #2a2a30; padding-top: 6px;
+        /* 内訳時間 */
+        .sub-time-stats {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
+            font-size: 10px; color: #aaa; text-align: center; background: #121214; padding: 6px; border-radius: 6px;
         }
-        .total-time { grid-column: 1 / span 2; font-weight: bold; color: #fff; font-size: 12px; }
 
-        /* 推しポイント専用枠 */
-        .oshi-frame {
-            background: linear-gradient(135deg, #2b1020, #42122b);
-            border: 2px solid #e84393;
-            border-radius: 12px;
-            padding: 12px;
-            width: 100%;
-            max-width: 400px;
-            margin: 10px auto 0;
+        /* 推しポイント（控えめデザイン） */
+        .oshi-sub-row {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(232, 67, 147, 0.2);
+            align-items: center;
+            background-color: #251820;
+            border: 1px solid #e84393;
+            border-radius: 8px;
+            padding: 8px 12px;
         }
-        .oshi-info { display: flex; flex-direction: column; }
-        .oshi-title { font-size: 11px; color: #fd79a8; font-weight: bold; }
-        .oshi-value { font-size: 18px; font-weight: bold; color: #fff; }
-        .oshi-btn {
-            background-color: #e84393; color: white; border: none; padding: 8px 16px;
-            border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        .oshi-sub-title { font-size: 11px; color: #fd79a8; font-weight: bold; }
+        .oshi-sub-val { font-size: 13px; font-weight: bold; color: #fff; }
+        .oshi-sub-btn {
+            background-color: #e84393; color: white; border: none; padding: 4px 10px;
+            border-radius: 12px; font-size: 10px; font-weight: bold; cursor: pointer;
         }
-        .oshi-btn:disabled { background-color: #555; color: #888; cursor: not-allowed; box-shadow: none; }
+        .oshi-sub-btn:disabled { background-color: #444; color: #777; cursor: not-allowed; }
 
         .sync-status {
-            font-size: 10px; color: #f1c40f; text-align: right; margin-top: 2px; display: flex; justify-content: space-between; align-items: center;
+            font-size: 9px; color: #f1c40f; display: flex; justify-content: space-between; align-items: center; margin-top: 2px;
         }
         .sync-btn {
             background: #333; color: #ccc; border: 1px solid #555; border-radius: 4px; padding: 2px 6px; font-size: 9px; cursor: pointer;
         }
 
-        .mission-trigger-btn {
-            background-color: #000000; border: 2px solid #2ecc71; color: #2ecc71;
-            border-radius: 8px; padding: 10px; font-size: 13px; font-weight: bold; text-align: center;
-            cursor: pointer; box-shadow: 0 4px 10px rgba(46, 204, 113, 0.2);
-            display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 400px; margin: 10px auto 0;
-        }
-
+        /* メインボタンエリア */
         .main-action-area { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 160px; }
-
         .study-trigger-btn {
             width: 120px; height: 120px; border-radius: 50%;
             background: radial-gradient(#e74c3c, #c0392b); border: 4px solid #f1c40f;
@@ -130,35 +144,36 @@
             cursor: pointer; box-shadow: 0 4px 10px rgba(142, 68, 173, 0.4); display: flex; align-items: center; gap: 6px;
         }
 
-        /* 教科タブ用レイアウト */
-        .subject-container { flex: 1; overflow-y: auto; padding: 10px; display: none; }
+        /* 教科タブ用レイアウト（縦向き・余白重視） */
+        .subject-container { flex: 1; overflow-y: auto; padding: 15px; display: none; }
         
-        .math-category { margin-bottom: 12px; background: #1a1a1e; border: 1px solid #2a2a30; border-radius: 8px; overflow: hidden; }
+        .math-category { margin-bottom: 16px; background: #1a1a1e; border: 1px solid #2a2a30; border-radius: 10px; overflow: hidden; }
         .math-category-title {
-            background-color: #25252b; padding: 10px 12px; font-size: 13px; font-weight: bold; color: #2ecc71;
+            background-color: #25252b; padding: 12px 15px; font-size: 14px; font-weight: bold; color: #2ecc71;
             display: flex; justify-content: space-between; align-items: center; cursor: pointer;
         }
 
-        .meter-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
+        .meter-list { display: flex; flex-direction: column; gap: 14px; padding: 12px; }
         
         .meter-card {
-            background-color: #121214; border: 1px solid #3a3a40; border-radius: 8px; padding: 10px;
-            display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
+            background-color: #121214; border: 1px solid #3a3a40; border-radius: 8px; padding: 12px 14px;
+            display: flex; flex-direction: column; gap: 8px;
         }
         .meter-header { display: flex; justify-content: space-between; align-items: center; }
-        .meter-title { font-size: 11px; font-weight: bold; color: #ffffff; }
-        .meter-lv { font-size: 10px; font-weight: bold; background-color: #2980b9; color: #fff; padding: 2px 6px; border-radius: 10px; }
+        .meter-title { font-size: 13px; font-weight: bold; color: #ffffff; }
+        .meter-lv { font-size: 10px; font-weight: bold; background-color: #2980b9; color: #fff; padding: 2px 8px; border-radius: 10px; }
         
         .meter-bar-outer {
-            width: 100%; height: 12px; background-color: #2a2a30; border-radius: 6px; overflow: hidden; border: 1px solid #444; position: relative;
+            width: 100%; height: 14px; background-color: #2a2a30; border-radius: 7px; overflow: hidden; border: 1px solid #444; position: relative;
         }
         .meter-bar-inner {
             height: 100%; background: linear-gradient(90deg, #2ecc71, #27ae60); width: 0%; transition: width 0.2s ease;
         }
-        .meter-count-text { font-size: 9px; color: #aaa; text-align: right; }
+        .meter-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
+        .meter-count-text { font-size: 10px; color: #aaa; }
 
         .add-progress-btn {
-            width: 100%; background-color: #27ae60; color: white; border: none; padding: 6px 0;
+            background-color: #27ae60; color: white; border: none; padding: 4px 12px;
             border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer;
         }
         .add-progress-btn:active { background-color: #219150; }
@@ -216,6 +231,16 @@
 
     <div id="home-container" class="main-container">
         <div class="status-frame">
+            <!-- 左上：累計時間 ＆ ミッションボタン -->
+            <div class="header-top-row">
+                <div>
+                    <div class="total-time-title">累計勉強時間</div>
+                    <div class="total-time-val"><span id="time-total">0.0</span> h</div>
+                </div>
+                <button class="mission-trigger-btn" onclick="openMissionListModal()">ミッション一覧</button>
+            </div>
+
+            <!-- レベル＆経験値 -->
             <div class="level-row">
                 <div class="level-circle">
                     <span id="display-lv">1</span>
@@ -227,29 +252,26 @@
                 </div>
             </div>
             
-            <div class="time-stats">
-                <div class="total-time">累計勉強時間: <span id="time-total">0.0</span> 時間</div>
-                <div>数学: <span id="time-math">0.0</span> h</div>
-                <div>物理: <span id="time-physics">0.0</span> h</div>
-                <div>英語: <span id="time-english">0.0</span> h</div>
+            <!-- 教科別内訳 -->
+            <div class="sub-time-stats">
+                <div>数学: <span id="time-math">0.0</span>h</div>
+                <div>物理: <span id="time-physics">0.0</span>h</div>
+                <div>英語: <span id="time-english">0.0</span>h</div>
             </div>
+
+            <!-- 控えめな推しポイント枠 -->
+            <div class="oshi-sub-row">
+                <div>
+                    <span class="oshi-sub-title">推しPt: </span>
+                    <span class="oshi-sub-val"><span id="oshi-pt-val">4.3</span> Pt</span>
+                </div>
+                <button class="oshi-sub-btn" id="oshi-use-btn" onclick="useOshiPoint()">使用 (5Pt)</button>
+            </div>
+
             <div class="sync-status">
                 <span id="sync-text">同期状態: 待機中</span>
                 <button class="sync-btn" onclick="fetchFromGAS()">再同期</button>
             </div>
-        </div>
-
-        <!-- 推しポイント表示枠 -->
-        <div class="oshi-frame">
-            <div class="oshi-info">
-                <span class="oshi-title">推しポイント (1時間=1Pt)</span>
-                <span class="oshi-value"><span id="oshi-pt-val">0</span> Pt</span>
-            </div>
-            <button class="oshi-btn" id="oshi-use-btn" onclick="useOshiPoint()">使用 (5Pt)</button>
-        </div>
-
-        <div class="mission-trigger-btn" onclick="openMissionListModal()">
-            <span>ミッション一覧</span>
         </div>
 
         <div class="main-action-area">
@@ -261,10 +283,10 @@
         </div>
     </div>
 
-    <!-- 各教科のメーター領域 -->
+    <!-- 各教科のメーター領域（縦向き・余白重視） -->
     <div id="math-container" class="subject-container"></div>
-    <div id="physics-container" class="subject-container"><div class="meter-grid" id="physics-grid"></div></div>
-    <div id="english-container" class="subject-container"><div class="meter-grid" id="english-grid"></div></div>
+    <div id="physics-container" class="subject-container"><div class="meter-list" id="physics-grid"></div></div>
+    <div id="english-container" class="subject-container"><div class="meter-list" id="english-grid"></div></div>
 
     <!-- 勉強記録入力モーダル -->
     <div class="modal-overlay" id="study-modal">
@@ -328,53 +350,17 @@
     </nav>
 
     <script>
-        // ★ご自身のGASデプロイURLを張り付けてください★
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxLRmXu5FEK2xVh3fK-w17pONY2jjp7OipQ0Yr5Jx6UFQE1QfcAJx_ZIAjiTjW2iQ-_Fw/exec";
 
-        // 数学（科目分け）設定
         const mathCategories = [
-            {
-                catName: "数Ⅰ",
-                items: [
-                    {id:"m_1_1", name:"数と式"}, {id:"m_1_2", name:"集合と論証"},
-                    {id:"m_1_3", name:"2次関数"}, {id:"m_1_4", name:"図形と計量"}, {id:"m_1_5", name:"データの分析"}
-                ]
-            },
-            {
-                catName: "数A",
-                items: [
-                    {id:"m_a_1", name:"場合の数と確率"}, {id:"m_a_2", name:"図形の性質"}
-                ]
-            },
-            {
-                catName: "数Ⅱ",
-                items: [
-                    {id:"m_2_1", name:"方程式・式と証明"}, {id:"m_2_2", name:"図形と方程式"},
-                    {id:"m_2_3", name:"三角関数"}, {id:"m_2_4", name:"指数関数・対数関数"}, {id:"m_2_5", name:"微分と積分"}
-                ]
-            },
-            {
-                catName: "数B",
-                items: [
-                    {id:"m_b_1", name:"数列"}, {id:"m_b_2", name:"統計的な推測"}
-                ]
-            },
-            {
-                catName: "数Ⅲ",
-                items: [
-                    {id:"m_3_1", name:"関数と極限"}, {id:"m_3_2", name:"微分"},
-                    {id:"m_3_3", name:"微分の応用"}, {id:"m_3_4", name:"積分とその応用"}
-                ]
-            },
-            {
-                catName: "数C",
-                items: [
-                    {id:"m_c_1", name:"ベクトル"}, {id:"m_c_2", name:"平面上の曲線"}, {id:"m_c_3", name:"複素数平面"}
-                ]
-            }
+            { catName: "数Ⅰ", items: [{id:"m_1_1", name:"数と式"}, {id:"m_1_2", name:"集合と論証"}, {id:"m_1_3", name:"2次関数"}, {id:"m_1_4", name:"図形と計量"}, {id:"m_1_5", name:"データの分析"}] },
+            { catName: "数A", items: [{id:"m_a_1", name:"場合の数と確率"}, {id:"m_a_2", name:"図形の性質"}] },
+            { catName: "数Ⅱ", items: [{id:"m_2_1", name:"方程式・式と証明"}, {id:"m_2_2", name:"図形と方程式"}, {id:"m_2_3", name:"三角関数"}, {id:"m_2_4", name:"指数関数・対数関数"}, {id:"m_2_5", name:"微分と積分"}] },
+            { catName: "数B", items: [{id:"m_b_1", name:"数列"}, {id:"m_b_2", name:"統計的な推測"}] },
+            { catName: "数Ⅲ", items: [{id:"m_3_1", name:"関数と極限"}, {id:"m_3_2", name:"微分"}, {id:"m_3_3", name:"微分の応用"}, {id:"m_3_4", name:"積分とその応用"}] },
+            { catName: "数C", items: [{id:"m_c_1", name:"ベクトル"}, {id:"m_c_2", name:"平面上の曲線"}, {id:"m_c_3", name:"複素数平面"}] }
         ];
 
-        // 他の教科設定
         const otherSubjectsConfig = {
             physics: [{id:"p1_1",name:"力学Ⅰ"}, {id:"p1_2",name:"力学Ⅱ"}, {id:"p2",name:"熱"}, {id:"p3",name:"波"}, {id:"p4",name:"電気"}, {id:"p5",name:"原子"}],
             english: [{id:"e1",name:"単語"}, {id:"e2",name:"文法"}, {id:"e3",name:"長文"}, {id:"e4",name:"リスニング"}]
@@ -407,19 +393,11 @@
 
         function getInitialState() {
             let meter = {};
-            // 数学全単元
-            mathCategories.forEach(cat => {
-                cat.items.forEach(item => { meter[item.id] = { lv: 0, count: 0 }; });
-            });
-            // 物理・英語
-            Object.keys(otherSubjectsConfig).forEach(sub => {
-                otherSubjectsConfig[sub].forEach(item => { meter[item.id] = { lv: 0, count: 0 }; });
-            });
+            mathCategories.forEach(cat => { cat.items.forEach(item => { meter[item.id] = { lv: 0, count: 0 }; }); });
+            Object.keys(otherSubjectsConfig).forEach(sub => { otherSubjectsConfig[sub].forEach(item => { meter[item.id] = { lv: 0, count: 0 }; }); });
 
             let mission = {};
-            summerMissionDefault.forEach((title, idx) => {
-                mission[idx] = { title: title, cleared: false };
-            });
+            summerMissionDefault.forEach((title, idx) => { mission[idx] = { title: title, cleared: false }; });
 
             return {
                 rpgState: { lv: 1, exp: 0, t_total: 0, t_math: 0, t_physics: 0, t_english: 0, oshi_used_pt: 0 },
@@ -463,7 +441,6 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.rpgState) {
-                        // データ構造の補完（旧データ対策）
                         appData = data;
                         if (appData.rpgState.oshi_used_pt === undefined) appData.rpgState.oshi_used_pt = 0;
                         updateStatusDOM();
@@ -493,10 +470,11 @@
             document.getElementById('time-physics').innerText = rpg.t_physics.toFixed(1);
             document.getElementById('time-english').innerText = rpg.t_english.toFixed(1);
 
-            // 推しポイント計算（1時間=1Pt、使用分を引く）
-            const totalEarnedPt = Math.floor(rpg.t_total);
-            const currentOshiPt = Math.max(0, totalEarnedPt - (rpg.oshi_used_pt || 0));
-            document.getElementById('oshi-pt-val').innerText = currentOshiPt;
+            // 推しポイント計算（初期値 4.3 Pt + 1時間ごとに1Pt - 使用分）
+            const BASE_OSHI_PT = 4.3;
+            const totalEarnedPt = rpg.t_total; 
+            const currentOshiPt = Math.max(0, (BASE_OSHI_PT + totalEarnedPt) - (rpg.oshi_used_pt || 0));
+            document.getElementById('oshi-pt-val').innerText = currentOshiPt.toFixed(1);
             
             // 5Pt未満なら使用ボタンを無効化
             const oshiBtn = document.getElementById('oshi-use-btn');
@@ -504,8 +482,8 @@
         }
 
         function useOshiPoint() {
-            const totalEarnedPt = Math.floor(appData.rpgState.t_total);
-            const currentOshiPt = totalEarnedPt - (appData.rpgState.oshi_used_pt || 0);
+            const BASE_OSHI_PT = 4.3;
+            const currentOshiPt = (BASE_OSHI_PT + appData.rpgState.t_total) - (appData.rpgState.oshi_used_pt || 0);
             if (currentOshiPt >= 5) {
                 if (confirm("5 Pt 消費して、推しタイム（5時間分の権利）を使用しますか？")) {
                     appData.rpgState.oshi_used_pt = (appData.rpgState.oshi_used_pt || 0) + 5;
@@ -516,9 +494,8 @@
             }
         }
 
-        // メーター描画（新システム：20回で1Lv）
         function renderMeters() {
-            // 1. 数学（アコーディオン形式）
+            // 1. 数学（縦向きアコーディオン）
             const mathContainer = document.getElementById('math-container');
             mathContainer.innerHTML = '';
 
@@ -526,15 +503,14 @@
                 const catDiv = document.createElement('div');
                 catDiv.className = 'math-category';
                 
-                let gridHTML = `<div class="meter-grid">`;
+                let listHTML = `<div class="meter-list">`;
                 cat.items.forEach(item => {
                     const mData = appData.meterState[item.id] || { lv: 0, count: 0 };
-                    // 古いデータとの互換性調整
                     const lv = (typeof mData === 'object') ? mData.lv : 0;
                     const count = (typeof mData === 'object') ? mData.count : 0;
                     const pct = (count / 20) * 100;
 
-                    gridHTML += `
+                    listHTML += `
                         <div class="meter-card">
                             <div class="meter-header">
                                 <span class="meter-title">${item.name}</span>
@@ -543,12 +519,14 @@
                             <div class="meter-bar-outer">
                                 <div class="meter-bar-inner" style="width: ${pct}%;"></div>
                             </div>
-                            <div class="meter-count-text">${count} / 20 回</div>
-                            <button class="add-progress-btn" onclick="addMeterCount('${item.id}')">+1 完了</button>
+                            <div class="meter-footer">
+                                <span class="meter-count-text">${count} / 20 回</span>
+                                <button class="add-progress-btn" onclick="addMeterCount('${item.id}')">+1 完了</button>
+                            </div>
                         </div>
                     `;
                 });
-                gridHTML += `</div>`;
+                listHTML += `</div>`;
 
                 catDiv.innerHTML = `
                     <div class="math-category-title" onclick="toggleCategory('cat-${cat.catName}')">
@@ -556,7 +534,7 @@
                         <span>▼</span>
                     </div>
                     <div id="cat-${cat.catName}" style="display: block;">
-                        ${gridHTML}
+                        ${listHTML}
                     </div>
                 `;
                 mathContainer.appendChild(catDiv);
@@ -582,8 +560,10 @@
                         <div class="meter-bar-outer">
                             <div class="meter-bar-inner" style="width: ${pct}%;"></div>
                         </div>
-                        <div class="meter-count-text">${count} / 20 回</div>
-                        <button class="add-progress-btn" onclick="addMeterCount('${item.id}')">+1 完了</button>
+                        <div class="meter-footer">
+                            <span class="meter-count-text">${count} / 20 回</span>
+                            <button class="add-progress-btn" onclick="addMeterCount('${item.id}')">+1 完了</button>
+                        </div>
                     `;
                     grid.appendChild(card);
                 });
@@ -595,7 +575,6 @@
             el.style.display = (el.style.display === 'none') ? 'block' : 'none';
         }
 
-        // ボタンを押したらカウント追加（20回でレベルUP）
         window.addMeterCount = function(id) {
             if (!appData.meterState[id] || typeof appData.meterState[id] !== 'object') {
                 appData.meterState[id] = { lv: 0, count: 0 };
@@ -611,7 +590,6 @@
             saveToGAS();
         };
 
-        // モーダル・ナビゲーション制御
         window.openStudyModal = function() { document.getElementById('study-modal').classList.add('active'); };
         window.closeStudyModal = function() { document.getElementById('study-modal').classList.remove('active'); document.getElementById('modal-duration').value=''; };
         window.openMissionListModal = function() { document.getElementById('mission-list-modal').classList.add('active'); };
@@ -728,7 +706,6 @@
             document.getElementById(`nav-${target}`).classList.add('active');
         };
 
-        // 初期描画＆GAS同期
         updateStatusDOM();
         renderMeters();
         switchTab('home');
