@@ -31,8 +31,7 @@
             overflow-y: auto;
             position: relative;
             gap: 12px;
-            /* 左上揃えベースの配置 */
-            align-items: flex-start;
+            align-items: flex-start; /* 左上揃え */
         }
 
         .status-frame {
@@ -41,7 +40,7 @@
             border-radius: 12px;
             padding: 12px;
             width: 100%;
-            max-width: 340px;
+            max-width: 320px;
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -85,54 +84,32 @@
             background: #333; color: #ccc; border: 1px solid #555; border-radius: 4px; padding: 2px 6px; font-size: 9px; cursor: pointer;
         }
 
-        /* ミッション一覧（色の復元＋左上揃え） */
+        /* ミッション一覧ボタン（緑枠・緑文字） */
         .home-btn {
-            background: linear-gradient(135deg, #2c3e50, #2980b9);
-            border: 2px solid #f1c40f;
-            color: #ffffff;
-            border-radius: 8px;
-            padding: 10px 14px;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            max-width: 340px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            background-color: #1a1a1e; border: 2px solid #2ecc71; color: #2ecc71;
+            border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: bold; text-align: center;
+            cursor: pointer; width: 100%; max-width: 220px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .home-btn:active { opacity: 0.9; }
+        .home-btn:active { background-color: #2a2a30; }
 
-        /* 推しポイント（枠のみ・長方形） */
+        /* 推しポイントフレーム（枠のみ・コンパクト長方形） */
         .oshi-frame {
             background-color: transparent;
-            border: 2px solid #ee4540;
-            border-radius: 8px;
-            padding: 10px;
-            width: 100%;
-            max-width: 280px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            border: 2px solid #ee4540; border-radius: 8px; padding: 8px 12px;
+            width: auto; display: flex; align-items: center; gap: 12px;
         }
         .oshi-info { display: flex; flex-direction: column; }
-        .oshi-title { font-size: 10px; color: #f67280; font-weight: bold; }
-        .oshi-pt { font-size: 18px; font-weight: bold; color: #ffffff; font-family: monospace; }
+        .oshi-title { font-size: 10px; color: #ee4540; font-weight: bold; }
+        .oshi-pt { font-size: 14px; font-weight: bold; color: #ffffff; font-family: monospace; }
         .oshi-use-btn {
-            background-color: #c72c41; color: white; border: 1px solid #f67280;
-            border-radius: 6px; padding: 6px 10px; font-size: 10px; font-weight: bold;
+            background-color: transparent; color: #ee4540; border: 1px solid #ee4540;
+            border-radius: 4px; padding: 4px 8px; font-size: 10px; font-weight: bold;
             cursor: pointer; transition: opacity 0.2s;
         }
-        .oshi-use-btn:disabled { opacity: 0.3; cursor: not-allowed; border-color: #555; background-color: #333; }
+        .oshi-use-btn:disabled { opacity: 0.3; cursor: not-allowed; border-color: #555; color: #555; }
 
-        .main-action-area {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 10px 0;
-        }
+        .main-action-area { width: 100%; display: flex; align-items: center; justify-content: center; margin: 15px 0; }
 
         .study-trigger-btn {
             width: 110px; height: 110px; border-radius: 50%;
@@ -142,23 +119,21 @@
         }
         .study-trigger-btn:active { transform: scale(0.95); }
 
-        /* ロードマップ（右下揃え・小長方形） */
+        /* ロードマップボタン（右下配置のコンパクト長方形） */
         .map-trigger-btn {
-            background-color: #8e44ad; border: 2px solid #9b59b6;
-            color: #ffffff; border-radius: 8px; padding: 8px 16px; font-size: 11px; font-weight: bold;
-            cursor: pointer; box-shadow: 0 4px 8px rgba(142, 68, 173, 0.4); text-align: center;
-            align-self: flex-end;
-            margin-top: auto;
+            position: absolute; right: 15px; bottom: 15px;
+            background-color: #1a1a1e; border: 2px solid #8e44ad;
+            color: #8e44ad; border-radius: 8px; padding: 8px 14px; font-size: 11px; font-weight: bold;
+            cursor: pointer; text-align: center; width: auto;
         }
+        .map-trigger-btn:active { background-color: #2a2a30; }
 
         .subject-container { flex: 1; overflow-y: auto; padding: 15px 10px; display: none; }
         
-        /* 数学のカテゴリ見出し（中央揃え） */
+        /* 教科グループ表示（数学用・中央揃え） */
         .category-header {
-            font-size: 14px; font-weight: bold; color: #2ecc71; margin: 16px 0 8px 0;
-            text-align: center;
-            border-bottom: 1px solid #2ecc71;
-            padding-bottom: 4px;
+            font-size: 13px; font-weight: bold; color: #2ecc71; margin: 12px 0 6px 0;
+            text-align: center; border-bottom: 1px solid #2ecc71; padding-bottom: 2px; width: 100%;
         }
 
         .meter-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 600px; margin: 0 auto; }
@@ -172,10 +147,8 @@
         .meter-fill { width: 100%; position: absolute; bottom: 0; background: linear-gradient(0deg, #27ae60, #2ecc71); transition: height 0.2s; }
         .meter-value { font-size: 10px; font-weight: bold; margin: 4px 0; font-family: monospace; color: #aaa; }
         
-        /* 回復と同じ緑ボタン・+1完了 */
-        .add-btn {
-            width: 100%; background-color: #27ae60; color: white; border: none; padding: 6px 0; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer;
-        }
+        /* メーター回復ボタン（緑色・「+1完了」） */
+        .add-btn { width: 100%; background-color: #27ae60; color: white; border: none; padding: 6px 0; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
         .add-btn:active { background-color: #2ecc71; }
 
         /* モーダル */
@@ -232,6 +205,7 @@
 <body>
 
     <div id="home-container" class="main-container">
+        <!-- 勉強時間枠 -->
         <div class="status-frame">
             <div class="level-row">
                 <div class="level-circle">
@@ -256,27 +230,28 @@
             </div>
         </div>
 
+        <!-- ミッション一覧ボタン -->
         <div class="home-btn" onclick="openMissionListModal()">
             <span>ミッション一覧</span>
-            <span>></span>
         </div>
 
-        <!-- 推しポイント機能 (枠線のみ長方形) -->
+        <!-- 推しポイント機能 -->
         <div class="oshi-frame">
             <div class="oshi-info">
-                <span class="oshi-title">推しPt（時間権利）</span>
-                <span class="oshi-pt"><span id="oshi-pt-val">0.0</span> Pt</span>
+                <span class="oshi-title">推しPt</span>
+                <span class="oshi-pt"><span id="oshi-pt-val">4.3</span> Pt</span>
             </div>
             <button class="oshi-use-btn" id="oshi-use-btn" onclick="useOshiPoint()" disabled>5Pt使用</button>
         </div>
 
+        <!-- 勉強記録ボタン（中央配置） -->
         <div class="main-action-area">
             <button class="study-trigger-btn" onclick="openStudyModal()">勉強記録</button>
         </div>
 
-        <!-- 右下揃えボタン -->
+        <!-- ロードマップボタン（右下配置） -->
         <div class="map-trigger-btn" onclick="openRoadmapModal()">
-            <span>ロードマップ ></span>
+            <span>ロードマップ</span>
         </div>
     </div>
 
@@ -402,7 +377,7 @@
                 mission[idx] = { title: title, cleared: false };
             });
             return {
-                rpgState: { lv: 1, exp: 0, t_total: 0, t_math: 0, t_physics: 0, t_english: 0, oshiPt: 0.0 },
+                rpgState: { lv: 1, exp: 0, t_total: 0, t_math: 0, t_physics: 0, t_english: 0, oshiPt: 4.3 },
                 meterState: meter,
                 summerMissionState: mission,
                 roadmapProgress: { main: 0, extra: 0 }
@@ -439,7 +414,7 @@
                 .then(data => {
                     if (data && data.rpgState) {
                         appData = data;
-                        if (appData.rpgState.oshiPt === undefined) appData.rpgState.oshiPt = 0.0;
+                        if (appData.rpgState.oshiPt === undefined) appData.rpgState.oshiPt = 4.3;
                         updateStatusDOM();
                         renderMeters();
                         document.getElementById('sync-text').innerText = "同期状態: 完了";
@@ -467,7 +442,7 @@
             document.getElementById('time-physics').innerText = rpg.t_physics.toFixed(1);
             document.getElementById('time-english').innerText = rpg.t_english.toFixed(1);
 
-            const pt = rpg.oshiPt || 0;
+            const pt = rpg.oshiPt !== undefined ? rpg.oshiPt : 4.3;
             document.getElementById('oshi-pt-val').innerText = pt.toFixed(1);
             document.getElementById('oshi-use-btn').disabled = (pt < 5.0);
         }
@@ -515,7 +490,6 @@
             const mData = appData.meterState[item.id] || { lv: 0, count: 0 };
             const count = typeof mData === 'object' ? (mData.count || 0) : 0;
             const lv = typeof mData === 'object' ? (mData.lv || 0) : 0;
-            
             const pct = Math.min(100, (count / 20) * 100);
 
             const card = document.createElement('div');
