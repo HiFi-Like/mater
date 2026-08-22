@@ -92,7 +92,6 @@
         }
         .home-btn:active { background-color: #2a2a30; }
 
-        /* 推しポイント：#e8135e の枠線 */
         .oshi-frame {
             background-color: #1a1a1e;
             border: 2px solid #e8135e; border-radius: 8px; padding: 8px 12px;
@@ -108,7 +107,6 @@
         }
         .oshi-use-btn:disabled { opacity: 0.3; cursor: not-allowed; border-color: #555; color: #555; }
 
-        /* 勉強記録ボタン（さらに下、画面下1/3あたりへ配置） */
         .main-action-area {
             width: 100%;
             display: flex;
@@ -230,6 +228,7 @@
                 <div>数学: <span id="time-math">0.0</span> h</div>
                 <div>物理: <span id="time-physics">0.0</span> h</div>
                 <div>英語: <span id="time-english">0.0</span> h</div>
+                <div>その他: <span id="time-other">0.0</span> h</div>
             </div>
             <div class="sync-status">
                 <span id="sync-text">同期状態: 待機中</span>
@@ -251,7 +250,7 @@
             <button class="oshi-use-btn" id="oshi-use-btn" onclick="useOshiPoint()" disabled>5Pt使用</button>
         </div>
 
-        <!-- 勉強記録ボタン（さらに下に配置） -->
+        <!-- 勉強記録ボタン -->
         <div class="main-action-area">
             <button class="study-trigger-btn" onclick="openStudyModal()">勉強記録</button>
         </div>
@@ -273,6 +272,7 @@
                 <option value="math">数学</option>
                 <option value="physics">物理</option>
                 <option value="english">英語</option>
+                <option value="other">その他</option>
             </select>
             <input type="number" id="modal-duration" step="0.1" placeholder="勉強時間（時間）を入力" min="0.1">
             <div class="modal-btns">
@@ -384,7 +384,7 @@
                 mission[idx] = { title: title, cleared: false };
             });
             return {
-                rpgState: { lv: 1, exp: 0, t_total: 0, t_math: 0, t_physics: 0, t_english: 0, oshiPt: 0 },
+                rpgState: { lv: 1, exp: 0, t_total: 0, t_math: 0, t_physics: 0, t_english: 0, t_other: 0, oshiPt: 0 },
                 meterState: meter,
                 summerMissionState: mission,
                 roadmapProgress: { main: 0, extra: 0 }
@@ -421,6 +421,7 @@
                 .then(data => {
                     if (data && data.rpgState) {
                         appData = data;
+                        if (appData.rpgState.t_other === undefined) appData.rpgState.t_other = 0;
                         updateStatusDOM();
                         renderMeters();
                         document.getElementById('sync-text').innerText = "同期状態: 完了";
@@ -447,6 +448,7 @@
             document.getElementById('time-math').innerText = rpg.t_math.toFixed(1);
             document.getElementById('time-physics').innerText = rpg.t_physics.toFixed(1);
             document.getElementById('time-english').innerText = rpg.t_english.toFixed(1);
+            document.getElementById('time-other').innerText = (rpg.t_other || 0).toFixed(1);
 
             const pt = rpg.oshiPt !== undefined ? rpg.oshiPt : 0;
             document.getElementById('oshi-pt-val').innerText = pt.toFixed(1);
@@ -456,7 +458,7 @@
         function useOshiPoint() {
             if (appData.rpgState.oshiPt >= 5.0) {
                 appData.rpgState.oshiPt -= 5.0;
-                alert('推しPtを使用しました！');
+                alert('推しタイム（5時間分の権利）を使用しました！');
                 updateStatusDOM();
                 saveToGAS();
             }
@@ -626,6 +628,10 @@
             if (sub === 'math') appData.rpgState.t_math += hours;
             if (sub === 'physics') appData.rpgState.t_physics += hours;
             if (sub === 'english') appData.rpgState.t_english += hours;
+            if (sub === 'other') {
+                if (appData.rpgState.t_other === undefined) appData.rpgState.t_other = 0;
+                appData.rpgState.t_other += hours;
+            }
 
             while (appData.rpgState.exp >= getRequiredExp(appData.rpgState.lv)) {
                 appData.rpgState.exp -= getRequiredExp(appData.rpgState.lv);
